@@ -23,7 +23,15 @@ docker build -t "${registry}teastore-registry" ../services/tools.descartes.teast
 docker build -t "${registry}teastore-persistence" ../services/tools.descartes.teastore.persistence/
 docker build -t "${registry}teastore-image" ../services/tools.descartes.teastore.image/
 docker build -t "${registry}teastore-webui" ../services/tools.descartes.teastore.webui/
-docker build -t "${registry}teastore-auth" ../services/tools.descartes.teastore.auth/
+
+# Build the auth serverless services
+docker build -t "${registry}auth_cart_add" ../services/auth_serverless/auth_cart/auth_cart_add/
+docker build -t "${registry}auth_cart_remove" ../services/auth_serverless/auth_cart/auth_cart_remove/ 
+docker build -t "${registry}auth_cart_update" ../services/auth_serverless/auth_cart/auth_cart_update/ 
+docker build -t "${registry}auth_user_loggedin" ../services/auth_serverless/auth_user/auth_user_loggedin/
+docker build -t "${registry}auth_user_login" ../services/auth_serverless/auth_user/auth_user_login/ 
+docker build -t "${registry}auth_user_logout" ../services/auth_serverless/auth_user/auth_user_logout/ 
+docker build -t "${registry}auth_user_order" ../services/auth_serverless/auth_user/auth_user_order/ 
 docker build -t "${registry}teastore-recommender" ../services/tools.descartes.teastore.recommender/
 perl -i -pe's|.*FROM '"${registry}"'|FROM descartesresearch/|g' ../services/tools.descartes.teastore.*/Dockerfile
 
@@ -35,6 +43,12 @@ if [ "$push_flag" = 'true' ]; then
   docker push "${registry}teastore-persistence"
   docker push "${registry}teastore-image"
   docker push "${registry}teastore-webui"
-  docker push "${registry}teastore-auth"
   docker push "${registry}teastore-recommender"
+  docker push "${registry}auth_cart_add"
+  docker push "${registry}auth_cart_remove"
+  docker push "${registry}auth_cart_update"
+  docker push "${registry}auth_user_loggedin"
+  docker push "${registry}auth_user_login"
+  docker push "${registry}auth_user_logout"
+  docker push "${registry}auth_user_order"
 fi

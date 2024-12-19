@@ -1,0 +1,126 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authcartadd
+spec:
+  template:
+    spec:
+      containers:
+      - image: mf189/auth_cart_add
+        resources:
+          requests:
+            cpu: 250m
+            memory: 250Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authcartremove
+spec:
+  template:
+    spec:
+      containers:
+      - image: mf189/auth_cart_remove
+        resources:
+          requests:
+            cpu: 500m
+            memory: 250Mi
+          limits:
+            cpu: 1000m
+            memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authcartupdate
+spec:
+  template:
+    spec:
+      containers:
+      - image: mf189/auth_cart_update
+        resources:
+          requests:
+            cpu: 500m
+            memory: 250Mi
+          limits:
+            cpu: 1000m
+            memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authuserloggedin
+spec:
+  template:
+    spec:
+      containers:
+      - image: mf189/auth_user_loggedin
+        resources:
+          requests:
+            cpu: 500m
+            memory: 250Mi
+          limits:
+            cpu: 1000m
+            memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authuserlogin
+spec:
+  template:
+    spec:
+      containers:
+      - image: mf189/auth_user_login
+        resources:
+          requests:
+            cpu: 500m
+            memory: 250Mi
+          limits:
+            cpu: 1000m
+            memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authuserlogout
+spec:
+  template:
+    spec:
+      containers:
+      - image: mf189/auth_user_logout
+        resources:
+          requests:
+            cpu: 500m
+            memory: 250Mi
+          limits:
+            cpu: 1000m
+            memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authuserorder
+spec:
+  template:
+    spec:
+      containers:
+      - image: mf189/auth_user_order
+        resources:
+          requests:
+            cpu: 500m
+            memory: 250Mi
+          limits:
+            cpu: 1000m
+            memory: 500Mi
+      

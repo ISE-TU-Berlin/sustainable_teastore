@@ -11,6 +11,9 @@ import tools.descartes.teastore.registryclient.util.NotFoundException;
 import tools.descartes.teastore.entities.Product;
 import tools.descartes.teastore.entities.message.SessionBlob;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * Container class for the static calls to the Store service.
  * 
@@ -18,9 +21,18 @@ import tools.descartes.teastore.entities.message.SessionBlob;
  *
  */
 public final class LoadBalancedStoreOperations {
+  static String namespace = getNamespace();
 
   private LoadBalancedStoreOperations() {
+  }
 
+  public static String getNamespace() {
+    //ADDED: Function to get current namespace
+    try {
+      return new String(Files.readAllBytes(Paths.get("/var/run/secrets/kubernetes.io/serviceaccount/namespace")));
+    } catch (Exception e) {
+      return "default";
+    }
   }
 
   /**
@@ -53,6 +65,7 @@ public final class LoadBalancedStoreOperations {
       String address2, String creditCardCompany, String creditCardExpiryDate,
       long totalPriceInCents, String creditCardNumber)
       throws NotFoundException, LoadBalancerTimeoutException {
+        //ADDED: Header for correct routing
     Response r = ServiceLoadBalancer.loadBalanceRESTOperation(Service.AUTH, "useractions",
         Product.class,
         client -> ResponseWrapper.wrap(HttpWrapper
@@ -61,7 +74,7 @@ public final class LoadBalancedStoreOperations {
                 .queryParam("address2", address2).queryParam("creditCardCompany", creditCardCompany)
                 .queryParam("creditCardNumber", creditCardNumber)
                 .queryParam("creditCardExpiryDate", creditCardExpiryDate)
-                .queryParam("totalPriceInCents", totalPriceInCents))
+                .queryParam("totalPriceInCents", totalPriceInCents)).header("Host", "authuserorder." + namespace + ".example.com")
             .post(Entity.entity(blob, MediaType.APPLICATION_JSON), Response.class)));
     return RestUtil.readThrowAndOrClose(r, SessionBlob.class);
   }
@@ -84,11 +97,12 @@ public final class LoadBalancedStoreOperations {
    */
   public static SessionBlob login(SessionBlob blob, String name, String password)
       throws NotFoundException, LoadBalancerTimeoutException {
+        //ADDED: Header for correct routing
     Response r = ServiceLoadBalancer.loadBalanceRESTOperation(Service.AUTH, "useractions",
         Product.class,
         client -> ResponseWrapper.wrap(HttpWrapper
             .wrap(client.getEndpointTarget().path("login").queryParam("name", name)
-                .queryParam("password", password))
+                .queryParam("password", password)).header("Host", "authuserlogin." + namespace + ".example.com")
             .post(Entity.entity(blob, MediaType.APPLICATION_JSON), Response.class)));
     return RestUtil.readThrowAndOrClose(r, SessionBlob.class);
   }
@@ -107,9 +121,10 @@ public final class LoadBalancedStoreOperations {
    */
   public static SessionBlob logout(SessionBlob blob)
       throws NotFoundException, LoadBalancerTimeoutException {
+        //ADDED: Header for correct routing
     Response r = ServiceLoadBalancer.loadBalanceRESTOperation(Service.AUTH, "useractions",
         Product.class,
-        client -> ResponseWrapper.wrap(HttpWrapper.wrap(client.getEndpointTarget().path("logout"))
+        client -> ResponseWrapper.wrap(HttpWrapper.wrap(client.getEndpointTarget().path("logout")).header("Host", "authuserlogout." + namespace + ".example.com")
             .post(Entity.entity(blob, MediaType.APPLICATION_JSON), Response.class)));
     return RestUtil.readThrowAndOrClose(r, SessionBlob.class);
   }
@@ -128,10 +143,11 @@ public final class LoadBalancedStoreOperations {
    */
   public static boolean isLoggedIn(SessionBlob blob)
       throws NotFoundException, LoadBalancerTimeoutException {
+        //ADDED: Header for correct routing
     Response r = ServiceLoadBalancer.loadBalanceRESTOperation(Service.AUTH, "useractions",
         Product.class,
         client -> ResponseWrapper
-            .wrap(HttpWrapper.wrap(client.getEndpointTarget().path("isloggedin"))
+            .wrap(HttpWrapper.wrap(client.getEndpointTarget().path("isloggedin")).header("Host", "authuserloggedin." + namespace + ".example.com")
                 .post(Entity.entity(blob, MediaType.APPLICATION_JSON), Response.class)));
     return RestUtil.readThrowAndOrClose(r, SessionBlob.class) != null;
   }
@@ -153,9 +169,10 @@ public final class LoadBalancedStoreOperations {
    */
   public static SessionBlob addProductToCart(SessionBlob blob, long pid)
       throws NotFoundException, LoadBalancerTimeoutException {
+        //ADDED: Header for correct routing
     Response r = ServiceLoadBalancer.loadBalanceRESTOperation(Service.AUTH, "cart", Product.class,
         client -> ResponseWrapper
-            .wrap(HttpWrapper.wrap(client.getEndpointTarget().path("add").path("" + pid))
+            .wrap(HttpWrapper.wrap(client.getEndpointTarget().path("add").path("" + pid)).header("Host", "authcartadd." + namespace + ".example.com")
                 .post(Entity.entity(blob, MediaType.APPLICATION_JSON), Response.class)));
     return RestUtil.readThrowAndOrClose(r, SessionBlob.class);
   }
@@ -176,9 +193,10 @@ public final class LoadBalancedStoreOperations {
    */
   public static SessionBlob removeProductFromCart(SessionBlob blob, long pid)
       throws NotFoundException, LoadBalancerTimeoutException {
+        //ADDED: Header for correct routing
     Response r = ServiceLoadBalancer.loadBalanceRESTOperation(Service.AUTH, "cart", Product.class,
         client -> ResponseWrapper
-            .wrap(HttpWrapper.wrap(client.getEndpointTarget().path("remove").path("" + pid))
+            .wrap(HttpWrapper.wrap(client.getEndpointTarget().path("remove").path("" + pid)).header("Host", "authcartremove." + namespace + ".example.com")
                 .post(Entity.entity(blob, MediaType.APPLICATION_JSON), Response.class)));
     return RestUtil.readThrowAndOrClose(r, SessionBlob.class);
   }
@@ -204,9 +222,10 @@ public final class LoadBalancedStoreOperations {
     if (quantity < 1) {
       throw new IllegalArgumentException("Quantity has to be larger than 1");
     }
+    //ADDED: Header for correct routing
     Response r = ServiceLoadBalancer.loadBalanceRESTOperation(Service.AUTH, "cart", Product.class,
         client -> ResponseWrapper.wrap(HttpWrapper
-            .wrap(client.getEndpointTarget().path("" + pid).queryParam("quantity", quantity))
+            .wrap(client.getEndpointTarget().path("" + pid).queryParam("quantity", quantity)).header("Host", "authcartupdate." + namespace + ".example.com")
             .put(Entity.entity(blob, MediaType.APPLICATION_JSON), Response.class)));
     return RestUtil.readThrowAndOrClose(r, SessionBlob.class);
   }

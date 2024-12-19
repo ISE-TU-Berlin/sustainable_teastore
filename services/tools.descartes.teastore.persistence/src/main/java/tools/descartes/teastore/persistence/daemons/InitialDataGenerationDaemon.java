@@ -53,6 +53,8 @@ public class InitialDataGenerationDaemon implements ServletContextListener {
    *          The servlet context event at destruction.
    */
   public void contextDestroyed(ServletContextEvent event) {
+    //ADDED: Fake Service Unregistration for Authentication Service
+    RegistryClient.getClient().register("tools.descartes.teastore.auth");
     RegistryClient.getClient().unregister(event.getServletContext().getContextPath());
   }
 
@@ -75,6 +77,9 @@ public class InitialDataGenerationDaemon implements ServletContextListener {
     LOG.info("Persistence finished initializing database");
     RegistryClient.getClient().register(event.getServletContext().getContextPath());
     LOG.info("Persistence started registration daemon");
+
+    //ADDED: Fake Service Registration for Authentication Service
+    RegistryClient.getClient().register("tools.descartes.teastore.auth");
   }
 
   private void waitForDatabase() {

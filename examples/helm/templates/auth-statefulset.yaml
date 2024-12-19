@@ -1,68 +1,204 @@
 {{- if .Values.auth.enabled }}
-apiVersion: apps/v1
-kind: StatefulSet
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
 metadata:
-  name: {{ include "teastore.auth.fullname" . }}
+  name: authcartadd
   labels:
     {{- include "teastore.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.auth.service.annotations }}
+    {{- toYaml . | nindent 8 }}
+    {{- end }}
 spec:
-  serviceName: {{ .Values.auth.svc_name }}
-  {{- if not .Values.auth.autoscaling.enabled }}
-  replicas: {{ .Values.auth.replicaCount }}
-  {{- end }}
-  selector:
-    matchLabels:
-      {{- include "teastore.auth.selectorLabels" . | nindent 6 }}
   template:
-    metadata:
-      annotations:
-        {{- with .Values.auth.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
-      labels:
-        {{- include "teastore.auth.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.auth.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      securityContext:
-        {{- toYaml .Values.auth.podSecurityContext | nindent 8 }}
-      terminationGracePeriodSeconds: 5
-      containers:
-        - name: {{ include "teastore.auth.microservice" . }}
-          securityContext:
-            {{- toYaml .Values.auth.securityContext | nindent 12 }}
-          image: "{{ .Values.auth.image.repository }}:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
-          ports:
-            - containerPort: 8080
-              protocol: TCP
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: SERVICE_PORT
-              value: {{ .Values.auth.service.port | quote }}
-            - name: HOST_NAME
-              value: {{ template "teastore.auth.hostname" . }}
-            - name: REGISTRY_HOST
-              value: {{ template "teastore.registry.url" . }}
-            - name: REGISTRY_PORT
-              value: {{ .Values.registry.service.port | quote }}
-          resources:
-            {{- toYaml .Values.auth.resources | nindent 12 }}
       {{- with .Values.auth.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.auth.affinity }}
-      affinity:
+      containers:
+        - image: "{{ .Values.auth.image.base }}/auth_cart_add:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 500m
+              memory: 500Mi
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authcartremove
+  labels:
+    {{- include "teastore.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.auth.service.annotations }}
+    {{- toYaml . | nindent 8 }}
+    {{- end }}
+spec:
+  template:
+    spec:
+      {{- with .Values.auth.nodeSelector }}
+      nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.auth.tolerations }}
-      tolerations:
+      containers:
+        - image: "{{ .Values.auth.image.base }}/auth_cart_remove:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 500m
+              memory: 250Mi
+            limits:
+              cpu: 1000m
+              memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authcartupdate
+  labels:
+    {{- include "teastore.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.auth.service.annotations }}
+    {{- toYaml . | nindent 8 }}
+    {{- end }}
+spec:
+  template:
+    spec:
+      {{- with .Values.auth.nodeSelector }}
+      nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      containers:
+        - image: "{{ .Values.auth.image.base }}/auth_cart_update:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 500m
+              memory: 250Mi
+            limits:
+              cpu: 1000m
+              memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authuserloggedin
+  labels:
+    {{- include "teastore.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.auth.service.annotations }}
+    {{- toYaml . | nindent 8 }}
+    {{- end }}
+spec:
+  template:
+    spec:
+      {{- with .Values.auth.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - image: "{{ .Values.auth.image.base }}/auth_user_loggedin:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 500m
+              memory: 250Mi
+            limits:
+              cpu: 1000m
+              memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authuserlogin
+  labels:
+    {{- include "teastore.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.auth.service.annotations }}
+    {{- toYaml . | nindent 8 }}
+    {{- end }}
+spec:
+  template:
+    spec:
+      {{- with .Values.auth.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - image: "{{ .Values.auth.image.base }}/auth_user_login:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 500m
+              memory: 250Mi
+            limits:
+              cpu: 1000m
+              memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authuserlogout
+  labels:
+    {{- include "teastore.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.auth.service.annotations }}
+    {{- toYaml . | nindent 8 }}
+    {{- end }}
+spec:
+  template:
+    spec:
+      {{- with .Values.auth.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - image: "{{ .Values.auth.image.base }}/auth_user_logout:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 500m
+              memory: 250Mi
+            limits:
+              cpu: 1000m
+              memory: 500Mi
+      
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authuserorder
+  labels:
+    {{- include "teastore.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.auth.service.annotations }}
+    {{- toYaml . | nindent 8 }}
+    {{- end }}
+spec:
+  template:
+    spec:
+      {{- with .Values.auth.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - image: "{{ .Values.auth.image.base }}/auth_user_order:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+          resources:
+            requests:
+              cpu: 500m
+              memory: 250Mi
+            limits:
+              cpu: 1000m
+              memory: 500Mi
+---
 {{- end }}

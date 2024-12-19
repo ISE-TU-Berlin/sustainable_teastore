@@ -1,0 +1,10 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authuserloggedin
+  namespace: st-marc
+spec:
+  template:
+    spec:
+      containers:
+      - image: docker.io/mf189/auth_user_loggedin

@@ -155,6 +155,11 @@ public class RegistryClient {
    */
   public void register(String contextPath) {
     Service service = getService(contextPath);
+    //ADDED: Set Host to Knative Gateway for Serverless Authentication Service
+    if (contextPath == "tools.descartes.teastore.auth") {
+      hostName = "istio-ingressgateway.istio-system.svc.cluster.local";
+      port = 80;
+    }
     Server host = getServer();
     heartbeatScheduler.scheduleAtFixedRate(new RegistryClientHeartbeatDaemon(service, host), 0,
         HEARTBEAT_INTERVAL_MS, TimeUnit.MILLISECONDS);

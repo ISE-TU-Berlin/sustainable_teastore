@@ -80,10 +80,15 @@ auth:
   enabled: true
   replicaCount: 1
   image:
-    repository: descartesresearch/teastore-auth
+    base: descartesresearch
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
+  knative:
+    enabled: false
+    namespace: knative-serving
+    istio:
+      deploy: false
   imagePullSecrets: []
   podAnnotations: {}
   podSecurityContext: {}
