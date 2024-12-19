@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.all.svc_name }}
+  labels:
+    {{- include "teastore.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.all.service.annotations }}
+    {{- toYaml . | nindent 8 }}
+    {{- end }}
+spec:
+  {{- if and (.Values.clientside_loadbalancer) (eq ( .Values.all.replicaCount | int ) 1) }}
+  clusterIP: None
+  {{- else }}
+  type: {{ .Values.all.service.type }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.all.service.port }}
+      name: http-all
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    {{- include "teastore.all.selectorLabels" . | nindent 4 }}

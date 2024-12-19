@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
   - name: teastore-all
-    image: descartesresearch/teastore-all
+    image: teastore-all:1.4.0
     ports:
     - containerPort: 8080
     env:
@@ -28,3 +28,38 @@ spec:
     protocol: TCP
   selector:
     run: teastore-all
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teastore-db
+spec:
+  selector:
+    matchLabels:
+      app: teastore
+      run: teastore-db
+  template:
+    metadata:
+      labels:
+        app: teastore
+        run: teastore-db
+    spec:
+      containers:
+      - name: teastore-db
+        image: descartesresearch/teastore-db
+        ports:
+        - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teastore-db
+  labels:
+    app: teastore
+    run: teastore-db
+spec:
+  ports:
+  - port: 3306
+    protocol: TCP
+  selector:
+    run: teastore-db

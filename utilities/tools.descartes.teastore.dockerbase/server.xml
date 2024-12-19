@@ -37,8 +37,20 @@
 
     <Connector port="8080" protocol="HTTP/1.1"
     			server="TeaStoreTomcat"
-               connectionTimeout="20000"
-               redirectPort="8443" />
+          connectionTimeout="20000"
+          redirectPort="8443" 
+          maxHttpHeaderSize="8192"
+          maxThreads="150"
+          minSpareThreads="25" 
+          maxSpareThreads="75"
+          enableLookups="false"
+          acceptCount="100"
+          disableUploadTimeout="true"
+          compression="on"
+          compressionMinSize="1024"
+          noCompressionUserAgents="gozilla, traviata"
+          compressableMimeType="text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json"
+    />
 
     <!-- Define an AJP 1.3 Connector on port 8009 -->
     <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" secretRequired="false" />
