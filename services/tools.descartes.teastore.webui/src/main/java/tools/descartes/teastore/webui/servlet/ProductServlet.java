@@ -27,7 +27,7 @@ import tools.descartes.teastore.registryclient.Service;
 import tools.descartes.teastore.registryclient.loadbalancers.LoadBalancerTimeoutException;
 import tools.descartes.teastore.registryclient.rest.LoadBalancedCRUDOperations;
 import tools.descartes.teastore.registryclient.rest.LoadBalancedImageOperations;
-import tools.descartes.teastore.registryclient.rest.LoadBalancedRecommenderOperations;
+// import tools.descartes.teastore.registryclient.rest.LoadBalancedRecommenderOperations;
 import tools.descartes.teastore.registryclient.rest.LoadBalancedStoreOperations;
 import tools.descartes.teastore.webui.servlet.elhelper.ELHelperUtils;
 import tools.descartes.teastore.entities.Category;
@@ -76,6 +76,8 @@ public class ProductServlet extends AbstractUIServlet {
       oi.setQuantity(1);
       items.add(oi);
       items.addAll(getSessionBlob(request).getOrderItems());
+
+      /*
       List<Long> productIds = LoadBalancedRecommenderOperations.getRecommendations(items,
           getSessionBlob(request).getUID());
       List<Product> ads = new LinkedList<Product>();
@@ -84,13 +86,15 @@ public class ProductServlet extends AbstractUIServlet {
             productId));
       }
 
-      if (ads.size() > 3) {
-        ads.subList(3, ads.size()).clear();
+      if (ads.size() > 1) {
+        ads.subList(1, ads.size()).clear();
       }
       request.setAttribute("Advertisment", ads);
 
       request.setAttribute("productImages", LoadBalancedImageOperations.getProductImages(ads,
           ImageSizePreset.RECOMMENDATION.getSize()));
+
+       */
       request.setAttribute("productImage", LoadBalancedImageOperations.getProductImage(p));
       request.setAttribute("storeIcon",
           LoadBalancedImageOperations.getWebImage("icon", ImageSizePreset.ICON.getSize()));

@@ -52,7 +52,7 @@ public class WebuiStartup implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         GlobalTracer.register(Tracing.init(Service.WEBUI.getServiceName()));
     	ServiceLoadBalancer.preInitializeServiceLoadBalancers(Service.AUTH, Service.IMAGE,
-    			Service.PERSISTENCE, Service.RECOMMENDER);
+    			Service.PERSISTENCE/**, Service.RECOMMENDER*/);
     	RegistryClient.getClient().register(event.getServletContext().getContextPath());
     }
 

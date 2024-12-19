@@ -17,7 +17,7 @@ package tools.descartes.teastore.webui.servlet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+// import java.util.LinkedList;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -30,7 +30,7 @@ import tools.descartes.teastore.registryclient.Service;
 import tools.descartes.teastore.registryclient.loadbalancers.LoadBalancerTimeoutException;
 import tools.descartes.teastore.registryclient.rest.LoadBalancedCRUDOperations;
 import tools.descartes.teastore.registryclient.rest.LoadBalancedImageOperations;
-import tools.descartes.teastore.registryclient.rest.LoadBalancedRecommenderOperations;
+// import tools.descartes.teastore.registryclient.rest.LoadBalancedRecommenderOperations;
 import tools.descartes.teastore.registryclient.rest.LoadBalancedStoreOperations;
 import tools.descartes.teastore.entities.Category;
 import tools.descartes.teastore.entities.ImageSizePreset;
@@ -85,6 +85,7 @@ public class CartServlet extends AbstractUIServlet {
     request.setAttribute("Products", products);
     request.setAttribute("login", LoadBalancedStoreOperations.isLoggedIn(getSessionBlob(request)));
 
+    /*
     List<Long> productIds = LoadBalancedRecommenderOperations
         .getRecommendations(blob.getOrderItems(), blob.getUID());
     List<Product> ads = new LinkedList<Product>();
@@ -96,10 +97,11 @@ public class CartServlet extends AbstractUIServlet {
     if (ads.size() > 3) {
       ads.subList(3, ads.size()).clear();
     }
+
     request.setAttribute("Advertisment", ads);
 
     request.setAttribute("productImages", LoadBalancedImageOperations.getProductPreviewImages(ads));
-
+    */
     request.getRequestDispatcher("WEB-INF/pages/cart.jsp").forward(request, response);
 
   }

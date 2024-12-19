@@ -3,10 +3,10 @@ webui:
   enabled: true
   replicaCount: 1
   image:
-    repository: descartesresearch/teastore-webui
+    repository: descartesresearch/webui-no-recs
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
+    tag: "latest"
   imagePullSecrets: []
   podAnnotations: {}
   podSecurityContext: {}
@@ -131,7 +131,7 @@ image:
   affinity: {}
   svc_name: teastore-image
 recommender:
-  enabled: true
+  enabled: false
   replicaCount: 1
   image:
     repository: descartesresearch/teastore-recommender

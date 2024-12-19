@@ -61,7 +61,6 @@
 				</c:if>
 			</form>
 		</div>
-		<%@include file="recommender.jsp"%>
 	</div>
 </div>
 <%@include file="footer.jsp"%>
